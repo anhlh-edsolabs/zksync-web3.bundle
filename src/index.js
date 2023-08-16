@@ -1,0 +1,1 @@
+global.zksync = require("zksync-web3");

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MetaMask Connection Demo</title>
+</head>
+
+<body>
+    <h1>MetaMask Connection Demo</h1>
+    <button id="connectButton">Connect to MetaMask</button>
+    <div id="networkInfo"></div>
+    <div id="connectionInfo"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="./dist/zksync-web3.bundle.browserify.js"></script>
+    <script>
+        async function connectToMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("MetaMask is not installed.");
+                return;
+            }
+
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                // Switch to network with chainId 33331 (for example, the RSK Testnet)
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: '0x8233',
+                                chainName: 'CLEO L2 - zkSync',
+                                rpcUrls: ['https://b22dadtubac-uat-l2rpcurl.synodus.com'],
+                                nativeCurrency: {
+                                    name: 'Gold Dinar',
+                                    symbol: 'GDN',
+                                    decimals: 18,
+                                },
+                                blockExplorerUrls: ['https://b22dadtubac-uat-l2blockscoutexplorer.synodus.com'],
+                            },
+                        ],
+                    });
+                    // alert("Switched to RSK Testnet (chainId 33331).");
+                    const networkInfo = document.getElementById("networkInfo");
+                    networkInfo.innerText = "Switched to CLEO L2 - zkSync (chainId 33331).";
+                } catch (error) {
+                    console.error('Error switching network:', error);
+                }
+
+                // const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const provider = new zksync.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const address = await signer.getAddress();
+
+                const connectionInfo = document.getElementById("connectionInfo");
+                connectionInfo.innerText = "Provider: " + provider.connection.url + "\r\nSigner: " + await signer.getAddress();
+                // alert(`Connected to MetaMask!\nYour Ethereum address: ${address}`);
+            } catch (error) {
+                console.error('Error connecting to MetaMask:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectButton = document.getElementById('connectButton');
+            connectButton.addEventListener('click', connectToMetaMask);
+        });
+    </script>
+</body>
+
+</html>
