@@ -21,7 +21,7 @@
 
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-                // Switch to network with chainId 33331 (for example, the RSK Testnet)
+                // Switch to network with chainId 33331
                 try {
                     await window.ethereum.request({
                         method: 'wallet_addEthereumChain',
@@ -39,7 +39,6 @@
                             },
                         ],
                     });
-                    // alert("Switched to RSK Testnet (chainId 33331).");
                     const networkInfo = document.getElementById("networkInfo");
                     networkInfo.innerText = "Switched to CLEO L2 - zkSync (chainId 33331).";
                 } catch (error) {
